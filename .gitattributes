@@ -6,3 +6,4 @@
 *.manifest text eol=lf
 *.png binary
 *.ico binary
+*.exe binary

@@ -31,19 +31,19 @@ static class Native {
     public static TargetBinding Identity(IntPtr h){if(!Allowed(h))return null;Rect r;if(!GetWindowRect(h,out r))return null;using(var p=GetProcess(h))return new TargetBinding {Handle=h.ToInt64(),ProcessId=p.Id,Started=p.StartTime.ToUniversalTime().Ticks,Width=r.Width,Height=r.Height,X=.5,Y=.5,Name=p.ProcessName};}
     public static bool SameWindow(TargetBinding b){if(b==null)return false;try{var h=new IntPtr(b.Handle);if(!IsWindow(h)||!Allowed(h))return false;using(var p=GetProcess(h))return p.Id==b.ProcessId&&p.StartTime.ToUniversalTime().Ticks==b.Started;}catch{return false;}}
     public static TargetBinding Bind(Point point) {
-        var h=GetAncestor(WindowFromPoint(point),2);if(!Allowed(h))throw new Exception("请把鼠标停在 Codex / ChatGPT / WorkBuddy 的聊天输入框内。");
-        Rect r;if(!GetWindowRect(h,out r)||r.Width<=0||r.Height<=0)throw new Exception("无法读取目标窗口。");
-        using(var p=GetProcess(h)) {var b=new TargetBinding {Handle=h.ToInt64(),ProcessId=p.Id,Started=p.StartTime.ToUniversalTime().Ticks,Width=r.Width,Height=r.Height,X=(double)(point.X-r.Left)/r.Width,Y=(double)(point.Y-r.Top)/r.Height,Name=p.ProcessName};if(!b.Valid)throw new Exception("请把鼠标放在输入框内部。");return b;}
+        var h=GetAncestor(WindowFromPoint(point),2);if(!Allowed(h))throw new Exception(L10n.T("请把鼠标停在 Codex / ChatGPT / WorkBuddy 的聊天输入框内。"));
+        Rect r;if(!GetWindowRect(h,out r)||r.Width<=0||r.Height<=0)throw new Exception(L10n.T("无法读取目标窗口。"));
+        using(var p=GetProcess(h)) {var b=new TargetBinding {Handle=h.ToInt64(),ProcessId=p.Id,Started=p.StartTime.ToUniversalTime().Ticks,Width=r.Width,Height=r.Height,X=(double)(point.X-r.Left)/r.Width,Y=(double)(point.Y-r.Top)/r.Height,Name=p.ProcessName};if(!b.Valid)throw new Exception(L10n.T("请把鼠标放在输入框内部。"));return b;}
     }
     public static bool Check(TargetBinding b,out string reason) {
-        reason="请先绑定聊天输入框。";if(b==null||!b.Valid)return false;
+        reason=L10n.T("请先绑定聊天输入框。");if(b==null||!b.Valid)return false;
         try {
-            var h=new IntPtr(b.Handle);if(!IsWindow(h)||!Allowed(h)){reason="目标窗口已关闭，请重新绑定。";return false;}
-            using(var p=GetProcess(h))if(p.Id!=b.ProcessId||p.StartTime.ToUniversalTime().Ticks!=b.Started){reason="目标应用已重启，请重新绑定。";return false;}
+            var h=new IntPtr(b.Handle);if(!IsWindow(h)||!Allowed(h)){reason=L10n.T("目标窗口已关闭，请重新绑定。");return false;}
+            using(var p=GetProcess(h))if(p.Id!=b.ProcessId||p.StartTime.ToUniversalTime().Ticks!=b.Started){reason=L10n.T("目标应用已重启，请重新绑定。");return false;}
             Rect r;if(!GetWindowRect(h,out r))return false;
-            if(!IsIconic(h)&&(r.Width!=b.Width||r.Height!=b.Height)){reason="目标窗口尺寸已变化，请重新绑定。";return false;}
-            reason="已绑定 "+b.Name;return true;
-        }catch{reason="目标窗口不可用，请重新绑定。";return false;}
+            if(!IsIconic(h)&&(r.Width!=b.Width||r.Height!=b.Height)){reason=L10n.T("目标窗口尺寸已变化，请重新绑定。");return false;}
+            reason=L10n.T("已绑定 ")+b.Name;return true;
+        }catch{reason=L10n.T("目标窗口不可用，请重新绑定。");return false;}
     }
     public static uint Modifiers(string s){return 0x4000u|(s=="Alt + S"?1u:s=="Ctrl + Shift + S"?6u:3u);}
     public static bool ModifiersDown(){return (GetAsyncKeyState(0x12)&0x8000)!=0||(GetAsyncKeyState(0x11)&0x8000)!=0||(GetAsyncKeyState(0x10)&0x8000)!=0;}

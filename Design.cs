@@ -31,13 +31,13 @@ sealed class ActionButton : Button {
 }
 sealed class PreviewBox : Control {
     public Image Preview;
-    public PreviewBox(){DoubleBuffered=true;BackColor=Color.FromArgb(243,247,245);AccessibleName="最近截图预览";}
+    public PreviewBox(){DoubleBuffered=true;BackColor=Color.FromArgb(243,247,245);AccessibleName=L10n.T("最近截图预览");}
     protected override void OnPaint(PaintEventArgs e){
         e.Graphics.Clear(BackColor);e.Graphics.SmoothingMode=SmoothingMode.AntiAlias;
         if(Preview==null){
             int cx=Width/2,cy=Height/2;float s=e.Graphics.DpiX/96f;
             using(var p=new Pen(Color.FromArgb(164,193,179),2*s)){e.Graphics.DrawRectangle(p,cx-21*s,cy-32*s,42*s,32*s);e.Graphics.DrawLine(p,cx-14*s,cy-8*s,cx-2*s,cy-20*s);e.Graphics.DrawLine(p,cx-2*s,cy-20*s,cx+14*s,cy-8*s);}
-            using(var f=new Font("Microsoft YaHei UI",10))TextRenderer.DrawText(e.Graphics,"你的下一张灵感，从这里开始",f,new Rectangle(0,cy+(int)(15*s),Width,(int)(32*s)),Theme.Muted,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);
+            using(var f=new Font("Microsoft YaHei UI",10))TextRenderer.DrawText(e.Graphics,L10n.T("你的下一张灵感，从这里开始"),f,new Rectangle(0,cy+(int)(15*s),Width,(int)(32*s)),Theme.Muted,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);
         }else{
             float factor=Math.Min((float)(Width-24)/Preview.Width,(float)(Height-24)/Preview.Height);int w=(int)(Preview.Width*factor),h=(int)(Preview.Height*factor);
             e.Graphics.InterpolationMode=InterpolationMode.HighQualityBicubic;e.Graphics.DrawImage(Preview,new Rectangle((Width-w)/2,(Height-h)/2,w,h));

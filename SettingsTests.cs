@@ -11,8 +11,13 @@ static class SettingsTests {
         try {
             string config=Path.Combine(root,"config","settings.txt");
             Check(!SnapSettings.Load(config).SaveEnabled,"Default saving should be off");
-            var s=new SnapSettings {SaveEnabled=true,SaveDirectory=Path.Combine(root,"截图 文件夹"),AutoPaste=false,CloseToTray=false,Hotkey="Ctrl + Alt + S"};s.Save(config);
+            var s=new SnapSettings {SaveEnabled=true,SaveDirectory=Path.Combine(root,"截图 文件夹"),AutoPaste=false,CloseToTray=false,Hotkey="Ctrl + Alt + S",Language="en"};s.Save(config);
             var loaded=SnapSettings.Load(config);Check(loaded.SaveEnabled&&loaded.SaveDirectory==s.SaveDirectory&&!loaded.AutoPaste&&!loaded.CloseToTray&&loaded.Hotkey=="Ctrl + Alt + S","Settings roundtrip");
+            Check(loaded.Language=="en","Language persists");
+            L10n.English=true;Check(L10n.T("开始截图")=="Capture screenshot","English UI");
+            L10n.English=false;Check(L10n.Existing("Capture screenshot")=="开始截图","Switch back to Chinese");
+            File.WriteAllLines(config,new[]{"False",s.SaveDirectory,"True","True","Alt + S"});Check(SnapSettings.Load(config).Language=="zh-CN","Existing Chinese profiles migrate");
+            s.Save(config);
             using(var bitmap=new Bitmap(17,11)) {bitmap.SetPixel(1,1,Color.Red);string a=loaded.SaveImage(bitmap),b=loaded.SaveImage(bitmap);Check(a!=b,"No filename collision");using(var read=new Bitmap(a)){Check(read.Width==17&&read.Height==11&&read.GetPixel(1,1).ToArgb()==Color.Red.ToArgb(),"PNG pixel roundtrip");}}
             loaded.SaveEnabled=false;loaded.Save(config);Check(!SnapSettings.Load(config).SaveEnabled,"Toggle persisted on replacement");
             File.WriteAllText(config,"broken");bool rejected=false;try{SnapSettings.Load(config);}catch(InvalidDataException){rejected=true;}Check(rejected,"Corrupt config detected");

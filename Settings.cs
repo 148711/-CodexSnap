@@ -9,24 +9,28 @@ public sealed class SnapSettings {
     public bool AutoPaste=true;
     public bool CloseToTray=true;
     public string Hotkey="Alt + S";
+    public string Language=CultureInfo.CurrentUICulture.TwoLetterISOLanguageName=="zh"?"zh-CN":"en";
     public string SaveDirectory=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),"CodexSnap");
     public static SnapSettings Load(string file) {
         var r=new SnapSettings(); if(!File.Exists(file))return r;
         var lines=File.ReadAllLines(file); bool enabled;
-        if((lines.Length!=2&&lines.Length!=5) || !bool.TryParse(lines[0],out enabled) || !Path.IsPathRooted(lines[1]))throw new InvalidDataException("保存设置损坏，已使用默认设置。原文件仍保留，可在设置页重新保存。");
+        if((lines.Length!=2&&lines.Length!=5&&lines.Length!=6) || !bool.TryParse(lines[0],out enabled) || !Path.IsPathRooted(lines[1]))throw new InvalidDataException(L10n.T("保存设置损坏，已使用默认设置。原文件仍保留，可在设置页重新保存。"));
         r.SaveEnabled=enabled; r.SaveDirectory=Path.GetFullPath(lines[1]);
         if(lines.Length>=5) {
             bool paste,close;
-            if(!bool.TryParse(lines[2],out paste)||!bool.TryParse(lines[3],out close)||!ValidHotkey(lines[4]))throw new InvalidDataException("设置格式无效，已使用默认设置。");
+            if(!bool.TryParse(lines[2],out paste)||!bool.TryParse(lines[3],out close)||!ValidHotkey(lines[4]))throw new InvalidDataException(L10n.T("设置格式无效，已使用默认设置。"));
             r.AutoPaste=paste;r.CloseToTray=close;r.Hotkey=lines[4];
         }
+        if(lines.Length==6){if(lines[5]!="en"&&lines[5]!="zh-CN")throw new InvalidDataException("Invalid language setting.");r.Language=lines[5];}
+        else r.Language="zh-CN";
         return r;
     }
     public static bool ValidHotkey(string s) {return s=="Alt + S"||s=="Ctrl + Shift + S"||s=="Ctrl + Alt + S";}
     public void Save(string file) {
-        if(!Path.IsPathRooted(SaveDirectory))throw new ArgumentException("请选择完整的文件夹路径。");
-        if(!ValidHotkey(Hotkey))throw new ArgumentException("快捷键设置无效。");
-        AtomicWrite(file,new[]{SaveEnabled.ToString(),Path.GetFullPath(SaveDirectory),AutoPaste.ToString(),CloseToTray.ToString(),Hotkey});
+        if(!Path.IsPathRooted(SaveDirectory))throw new ArgumentException(L10n.T("请选择完整的文件夹路径。"));
+        if(!ValidHotkey(Hotkey))throw new ArgumentException(L10n.T("快捷键设置无效。"));
+        if(Language!="en"&&Language!="zh-CN")throw new ArgumentException("Invalid language setting.");
+        AtomicWrite(file,new[]{SaveEnabled.ToString(),Path.GetFullPath(SaveDirectory),AutoPaste.ToString(),CloseToTray.ToString(),Hotkey,Language});
     }
     public static void AtomicWrite(string file,string[] lines) {
         Directory.CreateDirectory(Path.GetDirectoryName(file));string temp=file+"."+Guid.NewGuid().ToString("N")+".tmp";

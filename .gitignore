@@ -1,5 +1,6 @@
 # Build outputs and portable release archives
 *.exe
+!/CodexSnap.exe
 *.dll
 *.pdb
 *.zip

@@ -11,7 +11,7 @@ sealed class Selection : Form {
     readonly Bitmap screen;Point start,current;bool dragging;float uiScale;
     public Rectangle Selected;
     public Selection(Bitmap source,Rectangle bounds,Icon icon) {
-        Text="框选截图 · CodexSnap";Icon=icon;AutoScaleMode=AutoScaleMode.None;screen=source;
+        Text=L10n.T("框选截图 · CodexSnap");Icon=icon;AutoScaleMode=AutoScaleMode.None;screen=source;
         FormBorderStyle=FormBorderStyle.None;StartPosition=FormStartPosition.Manual;Bounds=bounds;
         TopMost=true;ShowInTaskbar=true;DoubleBuffered=true;Cursor=Cursors.Cross;KeyPreview=true;
         using(var g=Graphics.FromHwnd(IntPtr.Zero))uiScale=g.DpiX/96f;
@@ -32,7 +32,7 @@ sealed class Selection : Form {
         Rectangle monitor=Screen.FromPoint(Cursor.Position).Bounds;int toolbarWidth=Math.Min((int)(670*uiScale),monitor.Width-24);
         var box=new Rectangle(monitor.Left-Left+(monitor.Width-toolbarWidth)/2,monitor.Top-Top+(int)(24*uiScale),toolbarWidth,(int)(52*uiScale));
         g.SmoothingMode=SmoothingMode.AntiAlias;using(var p=Theme.Round(box,12*uiScale))using(var b=new SolidBrush(Color.FromArgb(246,24,43,37)))g.FillPath(b,p);
-        string hint="拖动框选 · 松开鼠标自动粘贴    |    Esc / 右键取消";
+        string hint=L10n.T("拖动框选 · 松开鼠标自动粘贴    |    Esc / 右键取消");
         using(var f=new Font("Microsoft YaHei UI",10))TextRenderer.DrawText(g,hint,f,box,Color.White,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);
         if(Selected.Width>0){var sizeBox=new Rectangle(Selected.Left,Math.Min(Height-(int)(34*uiScale),Selected.Bottom+(int)(6*uiScale)),(int)(170*uiScale),(int)(28*uiScale));using(var b=new SolidBrush(Color.FromArgb(240,24,43,37)))g.FillRectangle(b,sizeBox);using(var f=new Font("Segoe UI",10))TextRenderer.DrawText(g,Selected.Width+" × "+Selected.Height+" px",f,sizeBox,Color.White,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);}
     }

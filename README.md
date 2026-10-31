@@ -1,47 +1,72 @@
-# CodexSnap 2.1.0
+# CodexSnap — Screenshot & Auto-Paste for Codex and WorkBuddy
 
-Windows 截图助手，支持 Codex / ChatGPT 桌面应用和 WorkBuddy。
+**English** · [简体中文](README.zh-CN.md)
 
-## 使用
+**Alt + S → drag a region → release → paste into your chat.**
 
-双击 CodexSnap.exe。按 **Alt + S**，拖动框选，**松开鼠标就完成截图并粘贴到聊天窗口**。无需 Enter、双击或点击确认。右键 / Esc 取消；不足 3 像素的选区不触发粘贴。
+A lightweight Windows screenshot companion that brings errors, interfaces, and ideas directly into your Codex or WorkBuddy conversation.
 
-截图只进入输入框，不自动提交聊天消息。WorkBuddy 官方说明支持通过 Ctrl+V 粘贴剪贴板图片：https://www.workbuddy.cn/docs/workbuddy/Conversation
+**Created by kalpa / 西梦花客** · [2735373839@qq.com](mailto:2735373839@qq.com)
 
-## 自动选择目标
+## Download and run
 
-1. 优先使用触发快捷键时位于前台的 Codex / ChatGPT / WorkBuddy。
-2. 在其他软件内截图时，使用截图助手最近观察到的聊天窗口。
-3. 尚无最近窗口时，使用有效的备用绑定，或当前打开的受支持窗口。
+### [Download the Windows portable EXE · v2.2.0](https://github.com/148711/-CodexSnap/raw/refs/heads/main/CodexSnap.exe)
 
-在开始框选前固定目标，避免框选期间切换应用导致贴错窗口。自动发现可访问的聊天输入控件；应用未暴露控件时恢复原有输入焦点。不要把搜索框或其他编辑器当作聊天输入框；若某个版本不能恢复输入焦点，可在工作台设置一次“备用绑定”。窗口重启、尺寸或聊天布局改变后，备用坐标可能需要更新。输入框自动定位是尽力兼容，软件不能验证附件上传是否完成。
+Download and double-click `CodexSnap.exe`. No Python, Node.js, or .NET SDK installation required; the app uses Windows' .NET Framework. The ready-to-run EXE is committed alongside its source. Verify it with [SHA256SUMS.txt](SHA256SUMS.txt).
 
-## 保存与托盘
+1. Open a chat input in the Codex / ChatGPT desktop app or WorkBuddy.
+2. Press **Alt + S** and drag to select a screen region.
+3. **Release the mouse to capture and paste.** Add your question, then send when ready.
 
-- 偏好设置 → 选择文件夹，可设置 PNG 保存目录并开启自动保存；设置重启后保留。
-- 优先粘贴，再保存文件。保存失败时仍保留截图预览和剪贴板内容。
-- 工作台保留最近一张截图，可再次复制或另存为。退出后清除内存预览，剪贴板及主动保存的文件保留。
-- 默认关闭窗口后驻留托盘；双击托盘图标或再次启动 exe 可唤回窗口。托盘菜单中可完全退出。
-- 默认 Alt+S，可在设置中选择 Ctrl+Shift+S 或 Ctrl+Alt+S；冲突时有提示。
-- 截图成功后不弹确认窗口或成功通知。
+Right-click or press Esc to cancel. No Enter confirmation or success dialog.
 
-## 数据与兼容性
+## Screenshots
 
-程序本身不连接网络。粘贴会将图片交给目标应用，由目标应用处理。默认不把截图写入磁盘。配置和最多约 256 KB 的错误日志位于 `%LOCALAPPDATA%\CodexSnap`，日志不含截图内容。
+![CodexSnap English workspace — capture and auto-paste into Codex and WorkBuddy](docs/screenshots/workspace-en.png)
 
-程序使用普通用户权限。若目标应用以管理员身份运行，Windows 可能阻止输入模拟。当前使用系统 DPI 感知；不同缩放比例的多显示器组合仍需在对应设备上验收。
+![CodexSnap guide and creator contact information](docs/screenshots/about-en.png)
 
-## 构建与验证
+## What you can do
 
-使用 Windows 自带 .NET Framework 编译器，无需 .NET SDK。
+- **Capture and auto-paste:** follows the supported chat window active when you trigger the shortcut, or the most recently observed chat when capturing from another app.
+- **English and Chinese UI:** switch in the sidebar; your choice persists across restarts.
+- **Save original PNGs:** choose your folder. Paste happens before saving to reduce waiting.
+- **Reuse the latest capture:** copy it again or save it as a file.
+- **Stay ready in the tray:** close the window and keep your shortcut active. Launching the EXE again brings the workspace back.
+- **Choose your shortcut:** Alt+S, Ctrl+Shift+S, or Ctrl+Alt+S, with conflict detection.
+- **Fallback binding:** optionally remember an input position when automatic discovery is unavailable.
+
+## Paste behavior and privacy
+
+Images go into the composer; **messages are never submitted automatically**. WorkBuddy also documents clipboard image pasting in its [official guide](https://www.workbuddy.cn/docs/workbuddy/Conversation).
+
+CodexSnap first looks for an accessible chat input. If an app does not expose one, it restores the app's existing input focus. Keep your chat composer open. Some app versions, layouts, or permission levels may require fallback binding or manual Ctrl+V. CodexSnap cannot verify whether an attachment upload completed.
+
+CodexSnap itself does not upload screenshots. Pasting hands the image to your chat app, which handles it under its own behavior. By default, only the latest image stays in memory; disk saving is opt-in. Exiting clears the preview, but retains your clipboard and any saved files.
+
+Settings and error logs live in `%LOCALAPPDATA%\CodexSnap`; logs do not contain screenshot content. The app runs without administrator privileges. Windows may block input to elevated apps. Mixed-DPI multi-monitor setups need device-specific validation. This EXE is currently unsigned.
+
+## Build and test
 
 ```powershell
+git clone https://github.com/148711/-CodexSnap.git
+cd ./-CodexSnap
 powershell -ExecutionPolicy Bypass -File .\build.ps1
 powershell -ExecutionPolicy Bypass -File .\test.ps1
 ```
 
-图标已内嵌，单独复制 exe 即可使用。make_icon.py 用于重新生成图标，需要 Python 和 Pillow。
+Builds use the .NET Framework C# compiler bundled with Windows. Icons and translations are embedded in the EXE. Python and Pillow are only needed to regenerate the icon with `make_icon.py`.
 
-测试覆盖松开鼠标直接完成（不按 Enter）、微小点击保护、右键取消、WorkBuddy / Codex 进程识别、输入框筛选、配置迁移、绑定身份、PNG 像素保存、中文目录、原子覆盖和异常处理。WorkBuddy 5.9.3 已在本机检测并检查界面，完整的附件上传结果仍受目标应用及焦点状态影响。
+Tests cover release-to-capture, accidental clicks, cancellation, target recognition, composer filtering, language switching and settings migration, Unicode paths, PNG pixels, and atomic saving. Automated tests do not establish end-to-end compatibility with every target app version.
 
-此版本未进行代码签名，不应把测试通过等同于已完成所有设备上的商业发行认证。
+## Creator and feedback
+
+I'm **kalpa (西梦花客)**. I built this tool to turn the small hassle of moving screenshots into chat into one fluid action. I hope it helps more people who use Codex and WorkBuddy.
+
+- Email: [2735373839@qq.com](mailto:2735373839@qq.com)
+- GitHub: [148711](https://github.com/148711)
+- Bugs and ideas: [open an issue](https://github.com/148711/-CodexSnap/issues)
+
+If it makes your workflow easier, share the repository or leave a Star to help others discover it.
+
+This is an independent tool, not affiliated with OpenAI, Codex, or WorkBuddy. No open-source license has been selected yet; contact the author for redistribution or commercial licensing.
