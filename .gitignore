@@ -1,0 +1,27 @@
+# Build outputs and portable release archives
+*.exe
+*.dll
+*.pdb
+*.zip
+/releases/
+/bin/
+/obj/
+
+# IDE and local settings
+.vs/
+.vscode/
+*.user
+*.suo
+.env
+.env.*
+!.env.example
+
+# Runtime data and temporary files
+*.log
+*.tmp
+settings.txt
+binding.txt
+__pycache__/
+*.pyc
+Thumbs.db
+Desktop.ini
